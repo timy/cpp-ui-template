@@ -3,13 +3,24 @@
 typedef long LPARAM;
 typedef long HMENU;
 
+class AbstractWidget {
+public:
+  AbstractWidget() { id = counter++; } // automatically assigned unique id for each widget
+  virtual ~AbstractWidget() {}
+
+  HMENU id; // id may be used when invoking SendMessage
+private:
+  static int counter; // counter for id
+};
+int AbstractWidget::counter = 0;
+
 // base class of widget
 // Since a widget must reside on a window, it needs know the type of parent window and its pointer.
 // Each widget should be associated to a process function, which will be called by the parent window.
 template <typename Window>
-class BaseWidget {
+class BaseWidget : public AbstractWidget {
 public:
-  BaseWidget() { id = counter++; } // automatically assigned unique id for each widget
+  BaseWidget() : AbstractWidget() {} 
   virtual ~BaseWidget() {}
 
   // the prototype of process function defined in derived window class
@@ -17,15 +28,7 @@ public:
   virtual void Create(Window* wnd, int x, int y, CmdFunc func) {
     wnd->bind(id, func); // map: id -> process function
   }
-
-  HMENU id; // id may be used when invoking SendMessage
-
-private:
-  static int counter; // counter for id
 };
-
-template <typename Window>
-int BaseWidget<Window>::counter = 0;
 
 // general template of widget
 template <typename Window, typename T>
