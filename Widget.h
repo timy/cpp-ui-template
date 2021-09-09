@@ -1,18 +1,16 @@
 #pragma once
 
-typedef long LPARAM;
-typedef long HMENU;
+#include "typedef.h"
 
 class AbstractWidget {
 public:
   AbstractWidget() { id = counter++; } // automatically assigned unique id for each widget
   virtual ~AbstractWidget() {}
 
-  HMENU id; // id may be used when invoking SendMessage
+  WID id; // id may be used when invoking SendMessage
 private:
-  static int counter; // counter for id
+  static WID counter; // counter for id
 };
-int AbstractWidget::counter = 0;
 
 // base class of widget
 // Since a widget must reside on a window, it needs know the type of parent window and its pointer.
@@ -24,7 +22,7 @@ public:
   virtual ~BaseWidget() {}
 
   // the prototype of process function defined in derived window class
-  typedef void (Window::* CmdFunc)(int, LPARAM);
+  typedef void (Window::* CmdFunc)(WID, int, LPARAM);
   virtual void Create(Window* wnd, int x, int y, CmdFunc func) {
     wnd->bind(id, func); // map: id -> process function
   }
@@ -36,7 +34,7 @@ class Widget : public BaseWidget<Window> {
 public:
   Widget() {}
   virtual ~Widget() {}
-  void Create(Window* wnd, int x, int y) {
+  virtual void Create(Window* wnd, int x, int y) {
     BaseWidget<Window>::Create(wnd, x, y, nullptr);
   }
 };
@@ -51,7 +49,8 @@ struct edt_t {}; // edit
 template <typename Window>
 class Widget<Window, rdb_t> : public BaseWidget<Window> { // Radiobutton
 public:
-  void Create(Window* wnd, int x, int y, typename BaseWidget<Window>::CmdFunc func) {
+  virtual void Create(Window* wnd, int x, int y, typename BaseWidget<Window>::CmdFunc func) {
+    // create some actual radiobutton here ...
     BaseWidget<Window>::Create(wnd, x, y, func);
   }
 };
@@ -59,7 +58,8 @@ public:
 template <typename Window>
 class Widget<Window, edt_t> : public BaseWidget<Window> { // Edit
 public:
-  void Create(Window* wnd, int x, int y, typename BaseWidget<Window>::CmdFunc func) {
+  virtual void Create(Window* wnd, int x, int y, typename BaseWidget<Window>::CmdFunc func) {
+    // create some actual edit here ...
     BaseWidget<Window>::Create(wnd, x, y, func);
   }
 };
@@ -67,15 +67,17 @@ public:
 template <typename Window>
 class Widget<Window, ckb_t> : public BaseWidget<Window> { // Checkbox
 public:
-  void Create(Window* wnd, int x, int y, typename BaseWidget<Window>::CmdFunc func) {
+  virtual void Create(Window* wnd, int x, int y, typename BaseWidget<Window>::CmdFunc func) {
+    // create some actual checkbox here ...
     BaseWidget<Window>::Create(wnd, x, y, func);
   }
 };
 
 template <typename Window>
-class Widget<Window, btn_t> : public BaseWidget<Window> { // Checkbox
+class Widget<Window, btn_t> : public BaseWidget<Window> { // Button
 public:
-  void Create(Window* wnd, int x, int y, typename BaseWidget<Window>::CmdFunc func) {
+  virtual void Create(Window* wnd, int x, int y, typename BaseWidget<Window>::CmdFunc func) {
+    // create some actual button here ...
     BaseWidget<Window>::Create(wnd, x, y, func);
   }
 };
