@@ -1,9 +1,8 @@
 #include "MainWindow.h"
-#include <iostream>
-
 #include "ChannelDetailsWindow.h"
 #include "Widget.h"
 
+#include <iostream>
 using std::cout;
 using std::endl;
 
@@ -23,12 +22,11 @@ MainWindow::~MainWindow() {
 
 void MainWindow::Create() {
   // create widgets, and register their individual process functions
-  // example of standalone widgets
+  // standalone widgets
   ckbCardEnabled->Create(this, 100, 100, &MainWindow::cmd_ckbCardEnabled);
   btnApply->Create(this, 200, 100, &MainWindow::cmd_btnApply);
-  // example of widget in group
-
-  for (int i = 0; i < 4; i++)
+  // widget in group
+  for (int i = 0; i < nChannels; i++)
     chd[i].Create(this, 100, 200);
 }
 
